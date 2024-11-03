@@ -17,7 +17,7 @@ from rest_framework import generics,status
 import os
 import google.generativeai as genai
 
-genai.configure(api_key='AIzaSyBvYe7CUgJ1eeBgBpTSvRYhsEwhBPCBXIw')
+genai.configure(api_key='')
 
 @api_view(['POST'])
 def call_gpt_with_prompt(request):
