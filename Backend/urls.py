@@ -23,6 +23,7 @@ urlpatterns = [
     path('getnutrition/',getnutrition,name='Get All nutrition objects of a user'),
     path('getnutritionbyid/<str:id>/',getNutritionById,name='Get nutrition objects by id'),
     path('getfoods/<str:id>/',getFoods,name='Getting all Food related to a nutrition object'),
+    path('getworkout/',exerciseDB),
 ]
 
 if settings.DEBUG:
