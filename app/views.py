@@ -17,7 +17,7 @@ from rest_framework import generics,status
 import os
 import google.generativeai as genai
 
-genai.configure(api_key='')
+genai.configure(api_key='AIzaSyBvYe7CUgJ1eeBgBpTSvRYhsEwhBPCBXIw')
 
 @api_view(['POST'])
 def call_gpt_with_prompt(request):
@@ -31,7 +31,6 @@ def call_gpt_with_prompt(request):
         token = request.data.get('token')  # Use get to avoid KeyError
         if not token:
             return Response({'status': 400, 'message': 'Authentication failed'})
-
         try:
             # Verify the JWT token and decode the payload
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
@@ -50,7 +49,6 @@ def call_gpt_with_prompt(request):
 
         plan = Plans.objects.create(user=user,plan_name=nameOfPlan,plan=response.text)
         plan.save()
-        
         # Return the generated text in a serializable format (JSON)
         return Response({'status': 200, 'data': response.text})
 
@@ -96,6 +94,30 @@ class searchWorkout(generics.ListAPIView):
         data = queryset.get('data', [])
 
         return Response({ 'status':status_code,'data':data})
+
+@api_view(['POST'])
+def exerciseDB(request):
+    name = request.data['name']
+    print(name)
+    try:
+        url = f"https://exercisedb.p.rapidapi.com/exercises/name/{name}"
+        url = url.replace(' ', '%20')
+        querystring = {"limit": "10", "offset": "0"}
+
+        headers = {
+            "x-rapidapi-key": "6411f1b1a5mshc8b65c411355acfp1d0b9cjsn63007d842c38",
+            "x-rapidapi-host": "exercisedb.p.rapidapi.com"
+        }
+
+        response = requests.get(url, headers=headers, params=querystring)
+        response.raise_for_status()  # Raise an error for bad status codes
+
+        return Response({'status': 200, 'data': response.json()})
+    except requests.exceptions.RequestException as e:
+        return Response({'status': 400, 'message': 'Request Error: ' + str(e)})
+    except Exception as e:
+        return Response({'status': 400, 'message': 'Token Error: ' + str(e)})
+    
 
 @api_view(['POST'])
 def myPlans(request):
@@ -341,3 +363,4 @@ def getFoods(request,id):
         return Response({'status': 400, 'message': str(e)})
         
     
+
